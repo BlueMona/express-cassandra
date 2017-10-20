@@ -37,7 +37,8 @@
     "build": "babel src -d lib",
     "prepublish": "npm run build",
     "lint": "eslint src; exit 0",
-    "coverage": "istanbul cover _mocha -- -R spec"
+    "coverage": "istanbul cover _mocha -- -R spec",
+    "install": "babel src -d lib"
   },
   "license": "LGPL-3.0",
   "description": "Framework Independent Cassandra Object Models (ORM) for NodeJS",

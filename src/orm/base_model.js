@@ -732,9 +732,11 @@ BaseModel._create_table = function f(callback) {
         }
       }
     } else {
+      // Patch: throw error if table does not exists
+      callback(buildError('model.tablecreation.schemamismatch', tableName));
       // if not existing, it's created
-      const createTableQuery = this._create_table_query(tableName, modelSchema);
-      this._execute_definition_query(createTableQuery, [], afterDBCreate);
+      // const createTableQuery = this._create_table_query(tableName, modelSchema);
+      // this._execute_definition_query(createTableQuery, [], afterDBCreate);
     }
   });
 };
