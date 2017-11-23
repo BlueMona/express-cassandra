@@ -717,6 +717,21 @@ BaseModel._create_table = function f(callback) {
           }, afterDBAlter);
         };
 
+        const canKeepUpWithDBTable = () => {
+          const differences = deepDiff(normalizedDBSchema.fields, normalizedModelSchema.fields);
+          async.eachSeries(differences, (diff, next) => {
+            if (diff.kind === 'N') {
+              next();
+            } else if (diff.kind === 'D') {
+              next(buildError('model.tablecreation.schemamismatch', tableName));
+            } else if (diff.kind === 'E') {
+              next(buildError('model.tablecreation.schemamismatch', tableName));
+            } else {
+              next();
+	    }
+          });
+        };
+
         if (migration === 'alter') {
           // check if table can be altered to match schema
           if (_.isEqual(normalizedModelSchema.key, normalizedDBSchema.key) &&
@@ -727,6 +742,8 @@ BaseModel._create_table = function f(callback) {
           }
         } else if (migration === 'drop') {
           dropRecreateTable();
+        } else if (migration === 'safe') {
+          canKeepUpWithDBTable();
         } else {
           callback(buildError('model.tablecreation.schemamismatch', tableName));
         }
