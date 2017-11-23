@@ -720,11 +720,9 @@ BaseModel._create_table = function f(callback) {
         const canKeepUpWithDBTable = () => {
           const differences = deepDiff(normalizedDBSchema.fields, normalizedModelSchema.fields);
           async.eachSeries(differences, (diff, next) => {
-            if (diff.kind === 'N') {
+            if (diff.kind === 'D') {
               next();
-            } else if (diff.kind === 'D') {
-              next(buildError('model.tablecreation.schemamismatch', tableName));
-            } else if (diff.kind === 'E') {
+            } else if (['N', 'E' ].indexOf(diff.kind) !== -1) {
               next(buildError('model.tablecreation.schemamismatch', tableName));
             } else {
               next();
