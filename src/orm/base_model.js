@@ -313,6 +313,12 @@ BaseModel._create_table = function f(callback) {
       } else afterDBIndex();
     };
 
+    const pruneDbSchemaExtraFields = (modelSch, dbSch) => {
+      _.keys(dbSch.fields)
+        .filter((fld) => !modelSch.fields[fld])
+        .forEach((fld) => Reflect.deleteProperty(dbSch.fields, fld));
+    };
+
     if (dbSchema) {
       let normalizedModelSchema;
       let normalizedDBSchema;
@@ -323,6 +329,8 @@ BaseModel._create_table = function f(callback) {
       } catch (e) {
         throw (buildError('model.validator.invalidschema', e.message));
       }
+
+      pruneDbSchemaExtraFields(normalizedModelSchema, normalizedDBSchema);
 
       if (_.isEqual(normalizedModelSchema, normalizedDBSchema)) {
         callback();
